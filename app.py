@@ -11,10 +11,14 @@ def index():
 
 @app.route('/generate', methods=['POST'])
 def generate_qr():
-    data = request.form.get('data', '')
+    data = request.form.get('data', '').strip()
     
     if not data:
         return render_template('index.html', error='Please enter text or URL')
+    
+    # Validate input length to prevent abuse
+    if len(data) > 4096:
+        return render_template('index.html', error='Input too long (max 4096 characters)')
     
     # Generate QR code
     qr = qrcode.QRCode(
